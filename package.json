@@ -1,0 +1,32 @@
+{
+    "name": "to-data-uri",
+    "displayName": "Inline as Data URI",
+    "description": "Converts an image src attribute to a data uri",
+    "version": "0.0.1",
+    "publisher": "kieferrm",
+    "engines": {
+        "vscode": "^0.10.10"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onCommand:extension.toDataURI"
+    ],
+    "main": "./extension",
+    "contributes": {
+        "commands": [{
+            "command": "extension.toDataURI",
+            "title": "Inline as Data URI"
+        }]
+    },
+    "scripts": {
+        "postinstall": "node ./node_modules/vscode/bin/install"
+    },
+    "dependencies": {
+        "mimetype": "0.0.8"
+    },
+    "devDependencies": {
+        "vscode": "^0.11.0"
+    }
+}
