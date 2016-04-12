@@ -2,11 +2,12 @@ var vscode = require('vscode');
 var url = require('url');
 var fs = require('fs');
 var mimetype = require('mimetype');
+var util = require('util');
 
 
 
 function toUrl(uri) {
-    return url.parse(uri.toString());
+    return url.parse('string' === typeof (uri) ? uri : uri.toString());
 }
 
 
@@ -15,25 +16,67 @@ function findMimeType(fileUrl) {
 }
 
 
-function inlineFile(fileUrl, editor) {
-    if (fileUrl.protocol == 'file:') {
+function convertFile(fileUrl) {
+    return new Promise(function (resolve, reject) {
         fs.readFile(fileUrl.pathname, 'binary', function (err, imageData) {
-            if (!err) {
-                var mimeType = findMimeType(fileUrl);
-                var base64Image = new Buffer(imageData, 'binary').toString('base64');
-                var dataUri = 'data:' + mimeType + ';base64,' + base64Image;
-
-                editor.edit(function (builder) {
-                    builder.replace(editor.selection, dataUri);
-                });
+            if (err) {
+                return reject(err);
             }
+            var mimeType = findMimeType(fileUrl);
+            var base64Image = new Buffer(imageData, 'binary').toString('base64');
+            var dataUri = 'data:' + mimeType + ';base64,' + base64Image;
+            return resolve(dataUri);
         });
-    }
+    });
+}
+
+
+function inlineFile(fileUrl) {
+    convertFile(fileUrl).then(function (fileData) {
+        if (fileData) {
+            var editor = vscode.window.activeTextEditor;
+            editor.edit(function (builder) {
+                builder.replace(editor.selection, fileData);
+            });
+        }
+    });
 }
 
 
 function hasWorkspaceFolder(editor) {
     return vscode.workspace.rootPath ? true : false;
+}
+
+
+function getTextRange() {
+    var editor = vscode.window.activeTextEditor;
+    var result = {};
+    if (editor) {
+        result = { document: editor.document, range: editor.selection };
+    }
+    return result;
+}
+
+
+function getFiles(document, textRange) {
+    var text = document.getText(textRange);
+    if (!text) {
+        return Promise.resolve(null);
+    }
+
+    var imageSrc = url.parse(text);
+    if (imageSrc.protocol && 'file:' != imageSrc.protocol) {
+        return Promise.reject({ message: 'Can\'t inline remote files yet.' });
+    }
+
+    if (hasWorkspaceFolder()) {
+        var prefix = imageSrc.pathname.startsWith('/') ? '**' : '**/';
+        return Promise.resolve(vscode.workspace.findFiles(prefix + text, null, 10, null));
+    }
+
+    // not in workspace so look for image file relative to the opened file
+    var resolved = toUrl(url.resolve(editor.document.uri.toString(), imageSrc.format()));
+    return Promise.resolve(resolved);
 }
 
 
@@ -56,56 +99,58 @@ function computeItems(uris) {
 }
 
 
+function showMessage(message, context) {
+    var innerDisposable = vscode.window.showInformationMessage(message);
+    context.subscriptions.push(innerDisposable);
+}
+
+
 function activate(context) {
 
     var disposable = vscode.commands.registerCommand('extension.toDataURI', function () {
-        
-        var editor = vscode.window.activeTextEditor;
-        if (!editor) {
-            return;
-        }
-        
-        var text = editor.document.getText(editor.selection);
-        if (!text) {
-            return;
-        }
-        
-        var imageSrc = url.parse(text);
-        
-        if (hasWorkspaceFolder()) {
-            var prefix = imageSrc.pathname.startsWith('/') ? '**' : '**/';
-            vscode.workspace.findFiles(prefix + text, null, 10, null).then(function(uris) {
-                var innerDisposable;
-                if (!uris || uris.length == 0) {
-                    innerDisposable = vscode.window.showInformationMessage('Can\'t find the image file in your workspace.');
-                    context.subscriptions.push(innerDisposable);
-                    return;
-                }
-                if (uris.length == 1) {
-                    inlineFile(toUrl(uris[0]), editor);
-                    return;
-                }
-                var items = computeItems(uris);
-                vscode.window.showQuickPick(items, { placeHolder: 'Which file do you want to inline?'}).then(function(selectedItem) {
-                    if (selectedItem) {
-                        inlineFile(toUrl(selectedItem.uri), editor);
+
+        var textRange = getTextRange();
+        getFiles(textRange.document, textRange.range)
+            .then(function (uris) {
+                if (util.isArray(uris)) {
+
+                    if (uris.length == 0) {
+                        showMessage('Can\'t find the image file in your workspace.', context);
+                        return;
                     }
-                });
+
+                    if (uris.length == 1) {
+                        inlineFile(toUrl(uris[0]));
+                        return;
+                    }
+
+                    var items = computeItems(uris);
+                    vscode.window.showQuickPick(items, { placeHolder: 'Which file do you want to inline?' }).then(function (selectedItem) {
+                        if (selectedItem) {
+                            inlineFile(toUrl(selectedItem.uri));
+                        }
+                    });
+                    return;
+                }
+
+                if (uris) {
+                    inlineFile(uris);
+                }
+            })
+            .catch(function (reason) {
+                showMessage(reason.message ? reason.message : reason, context);
             });
-            
-        } else {
-            // look for image file relative to the opened file
-            var resolved = url.resolve(editor.document.uri.toString(), imageSrc.format());
-            inlineFile(url.parse(resolved), editor);
-        }
-       
+
     });
     context.subscriptions.push(disposable);
 }
-exports.activate = activate;
-
 
 
 function deactivate() {
 }
+
+
+exports.getFiles = getFiles;
+exports.convertFile = convertFile;
+exports.activate = activate;
 exports.deactivate = deactivate;

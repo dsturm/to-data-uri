@@ -1,0 +1,33 @@
+extend somePage
+
+block library_links
+    if development
+        link(rel="stylesheet", href=versionedPath("/css/lib/bootstrap.css"))
+    else
+        link(rel="stylesheet", href=versionedPath("/css/lib/bootstrap.min.css"))
+
+block scripts
+    if development
+        script(src = versionedPath("/cache/cdn/jquery.validate.js"))
+    else
+        script(src = "//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js")
+
+block main-content
+
+    #myBlock
+        #picture
+            img#graphics(src="images/icon.ico")
+            img#graphics(src="picture.png")
+
+        #signin_container
+            form#signinForm(action="/admin/login")
+                fieldset
+                    div.alert.alert-warning#errorContainer
+                    input#userid(type= "text", name= "userid", placeholder= "Enter Your User ID")
+                    input#password(type= "password", name= "password", placeholder= "Enter Your Password", autocomplete="off")
+                    input#signin(type="submit", value="Sign in")
+                nav
+                    a.text.first-nav(href="/signup") New users sign up here
+                    a.text.last-nav(href="/forgot") Forgot your password?
+
+    div.page_marker#thisPage

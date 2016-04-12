@@ -3,19 +3,27 @@
     "version": "0.1.0",
     "configurations": [
         {
-            "name": "Launch Extension",
+            "name": "Launch Extension - Folder",
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
-            "args": ["--extensionDevelopmentPath=${workspaceRoot}" ],
+            "args": ["${workspaceRoot}/test/test-data", "--extensionDevelopmentPath=${workspaceRoot}" ],
             "stopOnEntry": false
         },
         {
-            "name": "Launch Tests",
+            "name": "Launch Extension - File",
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
-            "args": ["--extensionDevelopmentPath=${workspaceRoot}", "--extensionTestsPath=${workspaceRoot}/test" ],
+            "args": ["${workspaceRoot}/test/test-data/page.html", "--extensionDevelopmentPath=${workspaceRoot}" ],
+            "stopOnEntry": false
+        },
+        {
+            "name": "Launch Tests - Folder",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": ["${workspaceRoot}/test/test-data", "--extensionDevelopmentPath=${workspaceRoot}", "--extensionTestsPath=${workspaceRoot}/test/env-folder" ],
             "stopOnEntry": false
         }
     ]
