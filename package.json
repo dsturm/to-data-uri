@@ -2,8 +2,12 @@
     "name": "to-data-uri",
     "displayName": "Inline as Data URI",
     "description": "Converts an image src attribute to a data uri",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "publisher": "kieferrm",
+    "icon": "images/extension-icon.png",
+    "repository": {
+        "url": "https://github.com/kieferrm/to-data-uri"
+    },
     "engines": {
         "vscode": "^0.10.10"
     },

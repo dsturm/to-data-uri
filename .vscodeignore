@@ -3,3 +3,4 @@ typings/**
 test/**
 .gitignore
 jsconfig.json
+images/*.pxm
