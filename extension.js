@@ -75,7 +75,7 @@ function getFiles(document, textRange) {
     }
 
     // not in workspace so look for image file relative to the opened file
-    var resolved = toUrl(url.resolve(editor.document.uri.toString(), imageSrc.format()));
+    var resolved = toUrl(url.resolve(document.uri.toString(), imageSrc.format()));
     return Promise.resolve(resolved);
 }
 
