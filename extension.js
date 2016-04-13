@@ -115,7 +115,12 @@ function activate(context) {
                 if (util.isArray(uris)) {
 
                     if (uris.length == 0) {
-                        showMessage('Can\'t find the image file in your workspace.', context);
+                        var message = "Can't find the selected image file in your workspace."
+                        var fileName = textRange.document.getText(textRange.range);
+                        if (fileName) {
+                            message = "Can't find the file '" + fileName + "' in your workspace.";
+                        }
+                        showMessage(message, context);
                         return;
                     }
 
