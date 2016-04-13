@@ -1,3 +1,5 @@
+"use strict";
+
 var vscode = require('vscode');
 var url = require('url');
 var fs = require('fs');
@@ -32,7 +34,7 @@ function convertFile(fileUrl) {
 
 
 function inlineFile(fileUrl) {
-    convertFile(fileUrl).then(function (fileData) {
+    return convertFile(fileUrl).then(function (fileData) {
         if (fileData) {
             var editor = vscode.window.activeTextEditor;
             editor.edit(function (builder) {
@@ -115,8 +117,8 @@ function activate(context) {
                 if (util.isArray(uris)) {
 
                     if (uris.length == 0) {
-                        var message = "Can't find the selected image file in your workspace."
-                        var fileName = textRange.document.getText(textRange.range);
+                        let message = "Can't find the selected image file in your workspace."
+                        let fileName = textRange.document.getText(textRange.range);
                         if (fileName) {
                             message = "Can't find the file '" + fileName + "' in your workspace.";
                         }
@@ -129,7 +131,7 @@ function activate(context) {
                         return;
                     }
 
-                    var items = computeItems(uris);
+                    let items = computeItems(uris);
                     vscode.window.showQuickPick(items, { placeHolder: 'Which file do you want to inline?' }).then(function (selectedItem) {
                         if (selectedItem) {
                             inlineFile(toUrl(selectedItem.uri));
@@ -139,7 +141,21 @@ function activate(context) {
                 }
 
                 if (uris) {
-                    inlineFile(uris);
+                    inlineFile(uris).catch(function(reason) {
+                        let message = reason.message;
+                        if (message) {
+                            if (message.indexOf('no such file or directory') > 0) {
+                                message = "Can't find the selected image file."
+                                let fileName = textRange.document.getText(textRange.range);
+                                if (fileName) {
+                                    message = "Can't find the file '" + fileName + "'.";
+                                }
+                            }
+                        } else {
+                            message = reason;
+                        }
+                        showMessage(message, context);
+                    });
                 } else {
                     showMessage('Before running this command, select the value of the src attribute of a html img element.', context);
                 }
