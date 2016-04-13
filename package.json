@@ -1,7 +1,7 @@
 {
     "name": "to-data-uri",
-    "displayName": "Inline Images as Data URI",
-    "description": "Converts an image src attribute of a html page into a data uri for faster page loading",
+    "displayName": "As Data URI",
+    "description": "Inlines images on html pages for faster page loading.",
     "version": "0.1.0",
     "publisher": "kieferrm",
     "icon": "images/extension-icon.png",
