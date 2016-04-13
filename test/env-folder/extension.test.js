@@ -5,7 +5,7 @@ var toDataUri = require('../../extension');
 
 
 function log(document, range) {
-    console.log('SNIPPET: ' + document.getText(range));
+    // console.log('SNIPPET: ' + document.getText(range));
 }
 
 suite('window was opened on workspace', function () {
@@ -83,40 +83,51 @@ suite('window was opened on workspace', function () {
 });
 
 
-// suite('compare data uris', function () {
+suite('compare data uris', function () {
 
-//     suiteSetup(function (done) {
-//         done();
-//     });
-
-
-//     suiteTeardown(function (done) {
-//         vscode.commands.executeCommand('workbench.files.action.closeAllFiles').then(function () {
-//             done();
-//         })
-//     });
+    suiteSetup(function (done) {
+        done();
+    });
 
 
-//     test('compare png', function (done) {
-//         var expected;
-//         var filePath = vscode.workspace.rootPath + '/expected/inline-picture-png';
-//         vscode.workspace.openTextDocument(filePath)
-//             .then(function (textDocument) {
-//                 expected = textDocument.getText();
-//                 var fileUrl = url.parse(vscode.workspace.rootPath + '/picture.png');
-//                 return toDataUri.convertFile(fileUrl);
-//             })
-//             .then(function (actual) {
-//                 assert.equal(expected, actual, 'png convertation did not produce expected result');
-//                 done();
-//             })
-//     });
+    suiteTeardown(function (done) {
+        vscode.commands.executeCommand('workbench.files.action.closeAllFiles').then(function () {
+            done();
+        })
+    });
+
+
+    test('compare png', function (done) {
+        var expected;
+        var filePath = vscode.workspace.rootPath + '/expected/inlined-picture-png';
+        vscode.workspace.openTextDocument(filePath)
+            .then(function (textDocument) {
+                expected = textDocument.getText();
+                var fileUrl = url.parse(vscode.workspace.rootPath + '/picture.png');
+                return toDataUri.convertFile(fileUrl);
+            })
+            .then(function (actual) {
+                assert.equal(expected, actual, 'png convertation did not produce expected result');
+                done();
+            })
+    });
     
     
-//     test('compare ico', function (done) {
-//         done();
-//     });
-// });
+    test('compare ico', function (done) {
+        var expected;
+        var filePath = vscode.workspace.rootPath + '/expected/inlined-icon-ico';
+        vscode.workspace.openTextDocument(filePath)
+            .then(function (textDocument) {
+                expected = textDocument.getText();
+                var fileUrl = url.parse(vscode.workspace.rootPath + '/icon.ico');
+                return toDataUri.convertFile(fileUrl);
+            })
+            .then(function (actual) {
+                assert.equal(expected, actual, 'ico convertation did not produce expected result');
+                done();
+            })
+    });
+});
 
 
 
