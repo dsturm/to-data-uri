@@ -135,6 +135,8 @@ function activate(context) {
 
                 if (uris) {
                     inlineFile(uris);
+                } else {
+                    showMessage('Select the value of the src attribute of an html img element before running this command', context);
                 }
             })
             .catch(function (reason) {
