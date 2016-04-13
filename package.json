@@ -2,7 +2,7 @@
     "name": "to-data-uri",
     "displayName": "As Data URI",
     "description": "Inlines images on html pages for faster page loading.",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "publisher": "kieferrm",
     "icon": "images/extension-icon.png",
     "repository": {
@@ -25,10 +25,12 @@
     ],
     "main": "./extension",
     "contributes": {
-        "commands": [{
-            "command": "extension.toDataURI",
-            "title": "Inline as Data URI"
-        }]
+        "commands": [
+            {
+                "command": "extension.toDataURI",
+                "title": "Inline as Data URI"
+            }
+        ]
     },
     "scripts": {
         "postinstall": "node ./node_modules/vscode/bin/install"
