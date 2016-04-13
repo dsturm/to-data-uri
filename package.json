@@ -1,13 +1,18 @@
 {
     "name": "to-data-uri",
-    "displayName": "Inline as Data URI",
-    "description": "Converts an image src attribute to a data uri",
+    "displayName": "Inline Images as Data URI",
+    "description": "Converts an image src attribute of a html page into a data uri for faster page loading",
     "version": "0.1.0",
     "publisher": "kieferrm",
     "icon": "images/extension-icon.png",
     "repository": {
-        "url": "https://github.com/kieferrm/to-data-uri"
+        "url": "https://github.com/kieferrm/to-data-uri",
+        "type": "git"
     },
+    "bugs": {
+        "url": "https://github.com/kieferrm/to-data-uri/issues"
+    },
+    "homepage": "https://github.com/kieferrm/to-data-uri/blob/master/README.md",
     "license": "MIT",
     "engines": {
         "vscode": "^0.10.10"
