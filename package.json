@@ -8,6 +8,7 @@
     "repository": {
         "url": "https://github.com/kieferrm/to-data-uri"
     },
+    "license": "MIT",
     "engines": {
         "vscode": "^0.10.10"
     },
