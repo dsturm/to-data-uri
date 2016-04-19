@@ -7,7 +7,6 @@ var mimetype = require('mimetype');
 var util = require('util');
 
 
-
 function toUrl(uri) {
     return url.parse('string' === typeof (uri) ? uri : uri.toString());
 }
@@ -116,8 +115,8 @@ function activate(context) {
             .then(function (uris) {
                 if (util.isArray(uris)) {
 
-                    if (uris.length == 0) {
-                        let message = "Can't find the selected image file in your workspace."
+                    if (uris.length === 0) {
+                        let message = "Can't find the selected image file in your workspace.";
                         let fileName = textRange.document.getText(textRange.range);
                         if (fileName) {
                             message = "Can't find the file '" + fileName + "' in your workspace.";
@@ -126,7 +125,7 @@ function activate(context) {
                         return;
                     }
 
-                    if (uris.length == 1) {
+                    if (uris.length === 1) {
                         inlineFile(toUrl(uris[0]));
                         return;
                     }
@@ -145,7 +144,7 @@ function activate(context) {
                         let message = reason.message;
                         if (message) {
                             if (message.indexOf('no such file or directory') > 0) {
-                                message = "Can't find the selected image file."
+                                message = "Can't find the selected image file.";
                                 let fileName = textRange.document.getText(textRange.range);
                                 if (fileName) {
                                     message = "Can't find the file '" + fileName + "'.";
